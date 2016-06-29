@@ -64,7 +64,7 @@ export class HomePage {
                 let stopIndex = this.posts.length;
                 this.posts = this.posts.concat(data.data.children);
 
-                this.filterPosts(stopIndex);
+                this.handlePosts(stopIndex);
 
                 //We are done loading now so change the loading variable back
                 this.loading = false;
@@ -79,17 +79,6 @@ export class HomePage {
             });
     }
 
-    filterPosts(stopIndex: number) {
-
-        //Loop through all NEW posts that have been added. We are looping through
-        //in reverse since we are removing some items.
-        for (let i = this.posts.length - 1; i >= stopIndex; i--) {
-            this.processPost(i);
-
-
-        }
-    }
-
     getUrl(): string {
         //Build the URL that will be used to access the API based on the users current preferences
         let url = 'https://www.reddit.com/r/' + this.subreddit + '/' + this.sort + '/.json?limit=' + this.perPage;
@@ -102,6 +91,15 @@ export class HomePage {
         return url;
     }
 
+    handlePosts(stopIndex: number) {
+        //Loop through all NEW posts that have been added. We are looping through
+        //in reverse since we are removing some items.
+        for (let i = this.posts.length - 1; i >= stopIndex; i--) {
+            this.processPost(i);
+        }
+
+    }
+
     loadMore(): void {
         ++this.page;
         this.fetchData();
@@ -109,11 +107,41 @@ export class HomePage {
     }
 
     loadSettings(): void {
-        this.fetchData();
+        this.dataService.getData().then((settings) => {
+            if (typeof (settings) != "undefined") {
+                this.settings = JSON.parse(settings);
+                if (this.settings.length != 0) {
+                    this.sort = this.settings.sort;
+                    this.perPage = this.settings.perPage;
+                    this.subreddit = this.settings.subreddit;
+                }
+            }
+
+            this.changeSubreddit();
+        });
     }
 
     openSettings(): void {
-        console.log("TODO: Implement openSettings()");
+
+        let settingsModal = Modal.create(SettingsPage, {
+            perPage: this.perPage,
+            sort: this.sort,
+            subreddit: this.subreddit
+        });
+
+        settingsModal.onDismiss(settings => {
+            if (settings) {
+                this.perPage = settings.perPage;
+                this.sort = settings.sort;
+                this.subreddit = settings.subreddit;
+                
+                this.dataService.save(settings);
+                this.changeSubreddit();
+            }
+        });
+
+        this.nav.present(settingsModal);
+
     }
 
     playVideo(e, post): void {
@@ -203,9 +231,9 @@ export class HomePage {
     }
 
     reset(): void {
-      this.page = 1;
-      this.posts = [];
-      this.after = null;
+        this.page = 1;
+        this.posts = [];
+        this.after = null;
     }
 
     showComments(post): void {
