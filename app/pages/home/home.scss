@@ -1,3 +1,29 @@
-.home {
-  
+.gif-title {
+    background-color: #fff;
+}
+ion-label {
+    margin: 0;
+}
+ion-list {
+    margin: 0 !important;
+}
+ion-content img {
+    width: 100%;
+    height: auto;
+}
+.item,
+.item-inner,
+ion-item-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center;
+}
+video {
+    max-width: 100%;
+    height: auto;
+    background-color: #000;
+}
+.load-more-button {
+    width: 100%;
+    margin: 0;
 }
