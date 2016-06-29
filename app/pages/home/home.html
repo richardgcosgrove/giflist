@@ -22,8 +22,9 @@
         <div *ngFor="let post of posts">
             <ion-item (click)="playVideo($event, post)" no-lines style="background-color: #000;">
                 <img src="images/loader.gif" *ngIf="post.showLoader" style="width: 25px; position: absolute; left: 85%;" [style.top]="post.loaderOffset" />
-                <video loop [src]="post.data.url" [poster]="post.data.snapshot">
+                <video *ngIf="isVideo(post.data.url)" loop [src]="post.data.url" [poster]="post.data.snapshot">
                 </video>
+                <img *ngIf="isImage(post.data.url) || isGif(post.data.url)" [src]="post.data.url">
             </ion-item>
             <ion-list-header (click)="showComments(post)" class="gif-title" style="text-align: left;">
                 {{post.data.title}}

@@ -100,6 +100,21 @@ export class HomePage {
 
     }
 
+    isGif(url: string): boolean {
+        return url.indexOf('.gif') > -1;
+    }
+
+    isImage(url: string): boolean {
+        return url.indexOf('.jpg') > -1
+            || url.indexOf('.png') > -1;
+    }
+
+    isVideo(url: string): boolean {
+        return url.indexOf('.gifv') > -1
+            || url.indexOf('.webm') > -1
+            || url.indexOf('.mp4') > -1;
+    }
+
     loadMore(): void {
         ++this.page;
         this.fetchData();
@@ -134,7 +149,7 @@ export class HomePage {
                 this.perPage = settings.perPage;
                 this.sort = settings.sort;
                 this.subreddit = settings.subreddit;
-                
+
                 this.dataService.save(settings);
                 this.changeSubreddit();
             }
@@ -146,22 +161,25 @@ export class HomePage {
 
     playVideo(e, post): void {
 
-        //Create a reference to the video
-        let video = e.target;
-        //Set the loader animation in the right position
-        post.loaderOffset = e.target.offsetTop + 20 + "px";
+        if (this.isVideo(post.data.url)) {
 
-        //Toggle the video playing
-        if (video.paused) {
-            //Show the loader gif
-            post.showLoader = true;
-            video.play();
-            //Once the video starts playing, remove the loader gif
-            video.addEventListener("playing", function(e) {
-                post.showLoader = false;
-            });
-        } else {
-            video.pause();
+            //Create a reference to the video
+            let video = e.target;
+            //Set the loader animation in the right position
+            post.loaderOffset = e.target.offsetTop + 20 + "px";
+
+            //Toggle the video playing
+            if (video.paused) {
+                //Show the loader gif
+                post.showLoader = true;
+                video.play();
+                //Once the video starts playing, remove the loader gif
+                video.addEventListener("playing", function(e) {
+                    post.showLoader = false;
+                });
+            } else {
+                video.pause();
+            }
         }
 
     }
@@ -208,8 +226,7 @@ export class HomePage {
         convert the ones that
         * are to .mp4 files.
         */
-        if (post.data.url.indexOf('.gifv') > -1 ||
-            post.data.url.indexOf('.webm') > -1) {
+        if (this.isVideo(post.data.url)) {
             this.posts[i].data.url = post.data.url.replace('.gifv', '.mp4').replace('.webm', '.mp4');
 
             //If a preview image is available, assign it to the post as 'snapshot'
@@ -224,9 +241,9 @@ export class HomePage {
             else {
                 this.posts[i].data.snapshot = "";
             }
-        }
-        else {
-            this.posts.splice(i, 1);
+        } else if (!(this.isGif(post.data.url)
+          || this.isImage(post.data.url))) {
+              this.posts.splice(i, 1);
         }
     }
 
