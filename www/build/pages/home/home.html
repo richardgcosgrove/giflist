@@ -1,0 +1,40 @@
+<ion-header>
+
+    <ion-navbar secondary>
+
+        <ion-title>
+            <ion-searchbar primary placeholder="enter subreddit name..." hideCancelButton [(ngModel)]="subredditValue" [ngFormControl]="subredditControl"></ion-searchbar>
+        </ion-title>
+
+        <ion-buttons end>
+            <button (click)="openSettings()">
+                <ion-icon name="settings"></ion-icon>
+            </button>
+        </ion-buttons>
+
+    </ion-navbar>
+
+</ion-header>
+
+<ion-content class="home">
+
+    <ion-list>
+        <div *ngFor="let post of posts">
+            <ion-item (click)="playVideo($event, post)" no-lines style="background-color: #000;">
+                <img src="images/loader.gif" *ngIf="post.showLoader" style="width: 25px; position: absolute; left: 85%;" [style.top]="post.loaderOffset" />
+                <video *ngIf="isVideo(post.data.url)" loop [src]="post.data.url" [poster]="post.data.snapshot">
+                </video>
+                <img *ngIf="isImage(post.data.url) || isGif(post.data.url)" [src]="post.data.url">
+            </ion-item>
+            <ion-list-header (click)="showComments(post)" class="gif-title" style="text-align: left;">
+                {{post.data.title}}
+            </ion-list-header>
+        </div>
+        <ion-item *ngIf="loading" no-lines style="text-align: center;">
+            <img src="images/loader.gif" style="width: 50px" />
+        </ion-item>
+    </ion-list>
+
+    <button light (click)="loadMore()" class="load-more-button"><span style="width: 100%;">Load More...</span></button>
+
+</ion-content>
