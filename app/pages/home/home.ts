@@ -75,7 +75,7 @@ export class HomePage {
 
             }, (err) => {
                 //Fail silently, in this case the loading spinner will just continue to display
-                console.log("subreddit doesn't exist!");
+                console.log(`subreddit ${this.subreddit} doesn't exist!`);
             });
     }
 
@@ -245,6 +245,23 @@ export class HomePage {
           || this.isImage(post.data.url))) {
               this.posts.splice(i, 1);
         }
+    }
+
+    random(): void {
+        const subReddits = [
+            'funny',
+            'cute',
+            'pics',
+            'aww',
+            'polandball',
+            'comics',
+            'facepalm'
+        ]
+
+        const reddit = subReddits[Math.floor(Math.random() * subReddits.length)];
+        console.log(reddit);
+        this.subreddit = reddit;
+        this.changeSubreddit();
     }
 
     reset(): void {
